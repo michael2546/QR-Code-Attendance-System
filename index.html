@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scanner</title>
+    <script src="node_modules/html5-qrcode/html5-qrcode.min.js"></script>
+    <style>
+        main {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #reader {
+            width: 600px;
+        }
+
+        #result {
+            text-align: center;
+            font-size: 1.5rem;
+        }
+
+        #scan-again-btn {
+            display: none;
+            /* Hide the button by default */
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <div id="reader">
+
+        </div>
+        <div id="result">
+            <div id="msg"></div>
+            <!-- <button id="scan-again-btn">Scan Again</button> -->
+        </div>
+    </main>
+
+    <script>
+        
+        const scanner = new Html5QrcodeScanner('reader', {
+            qrbox: {
+                width: 250,
+                height: 250,
+            },
+            fps: 20
+        });
+
+        scanner.render(success, error);
+
+        function success(result) {
+            // Update the Google Sheets with the QR code value and 'attend' set to 1
+            fetch('https://script.google.com/macros/s/AKfycbwHNxik_-nHu7gOCv2x8zvLq6vmF1c-96P1UVYXeSKeMWQFARVEeMNXpq9IQ5Rnl0xnUA/exec', {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `name=${encodeURIComponent(result)}&attend=1`,
+            })
+                .then(res => res.text())
+                .then(data => {
+                    //document.querySelector("#msg").innerHTML = data;
+                    document.querySelector("#msg").textContent = `${encodeURIComponent(result)} Added Successfully`;
+                    //document.getElementById('scan-again-btn').style.display = 'block'; // Show the button
+                });
+
+            // Clear the scanner after processing
+            scanner.clear();
+            document.getElementById('reader').remove();
+        }
+
+        function error(err) {
+            console.error(err);
+        }
+
+        // Add event listener for the "Scan Again" button
+        // document.getElementById('scan-again-btn').addEventListener('click', function () {
+        //     // Re-render the scanner for a new scan
+        //     scanner.render(success, error);
+        //     // Hide the button again
+        //     document.getElementById('scan-again-btn').style.display = 'none';
+        // });
+    </script>
+</body>
+
+</html>
