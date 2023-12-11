@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scanner</title>
+    <title>E3dad 5odam Scanner</title>
     <!-- <script src="./node_modules/html5-qrcode/html5-qrcode.min.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
     <style>
@@ -55,18 +55,21 @@
         scanner.render(success, error);
 
         function success(result) {
+            // Get the current date in the format YYYY-MM-DD
+            const currentDate = new Date().toISOString().split('T')[0];
+
             // Update the Google Sheets with the QR code value and 'attend' set to 1
             fetch('https://script.google.com/macros/s/AKfycbwHNxik_-nHu7gOCv2x8zvLq6vmF1c-96P1UVYXeSKeMWQFARVEeMNXpq9IQ5Rnl0xnUA/exec', {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: `name=${encodeURIComponent(result)}&attend=1`,
+                body: `name=${encodeURIComponent(result)}&attend=${encodeURIComponent(currentDate)}`,
             })
                 .then(res => res.text())
                 .then(data => {
                     //document.querySelector("#msg").innerHTML = data;
-                    document.querySelector("#msg").textContent = `${encodeURIComponent(result)} Added Successfully`;
+                    document.querySelector("#msg").textContent = `${encodeURIComponent(result)} Added Successfully 🥳🎉`;
                     //document.getElementById('scan-again-btn').style.display = 'block'; // Show the button
                 });
 
